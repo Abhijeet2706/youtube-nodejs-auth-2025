@@ -1,0 +1,9 @@
+7. File uploader with multer, local uploaded, and used cloudinary
+
+In the same chapter learnt,changePassword, File deleting, pagination, sorting
+
+changePassword-- ImageAuth-controller
+
+deleteImage-- Image controller
+
+pagination and sorting --  Image controller

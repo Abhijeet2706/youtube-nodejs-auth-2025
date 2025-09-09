@@ -115,7 +115,58 @@ const loginUser = async (req, res) => {
     }
 };
 
+
+//change password
+
+const changePassword = async (req, res) => {
+    try {
+        const userId = req.userInfo.userId;
+
+        //extracing old and new password
+        const { oldPassword, newPassword } = req.body;
+
+        //Find the current loggedin user
+        const user = await User.findById(userId);
+
+        if (!user) {
+            return res.status(400).json({
+                success: false,
+                message: "This user is not available on record "
+            })
+        };
+
+        //checking If the old password is correct;
+        const isPasswordMatch = await bycrypt.compare(oldPassword, user.password);
+        if (!isPasswordMatch) {
+            return res.status(400).json({
+                success: false,
+                message: "Old password is not correct, please try again"
+            })
+        };
+
+        //hasing the new password
+        const salt = await bycrypt.genSalt(10);
+        const newHashedPassword = await bycrypt.hash(newPassword, salt);
+
+        //updaing user password
+        user.password = newHashedPassword;
+        await user.save();
+
+        return res.status(200).json({
+            success: true,
+            message: "Password changed successfully"
+        })
+    } catch (error) {
+        console.log("Password changes failed", error);
+        res.status(500).json({
+            success: false,
+            message: "Internal server error! and issue on changePassword function in auth-controller file"
+        })
+    }
+}
+
 module.exports = {
     loginUser,
-    registerUser
+    registerUser,
+    changePassword
 }
